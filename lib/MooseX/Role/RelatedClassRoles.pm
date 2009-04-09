@@ -1,5 +1,5 @@
 package MooseX::Role::RelatedClassRoles;
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 # ABSTRACT: Apply roles to a class related to yours
 use MooseX::Role::Parameterized;
@@ -21,13 +21,21 @@ parameter apply_method_name => (
   default  => sub { 'apply_' . $_[0]->class_accessor_name . '_roles' },
 );
 
+# This is undocumented because you shouldn't use it unless you really know you
+# have to.
+parameter require_class_accessor => (
+  isa      => 'Bool',
+  default  => 1,
+);
+
 role {
   my $p = shift;
 
   my $class_accessor_name = $p->class_accessor_name;
   my $apply_method_name   = $p->apply_method_name;
 
-  requires $class_accessor_name;
+  requires $class_accessor_name
+    if $p->require_class_accessor;
 
   method $apply_method_name => sub {
     my $self = shift;
@@ -54,7 +62,7 @@ MooseX::Role::RelatedClassRoles - Apply roles to a class related to yours
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
